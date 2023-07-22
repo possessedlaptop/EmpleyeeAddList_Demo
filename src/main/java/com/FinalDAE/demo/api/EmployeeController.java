@@ -28,20 +28,18 @@ public class EmployeeController {
     }
 
     @PostMapping("")
-    public ModelAndView saveEmployee(@ModelAttribute("newEmployee") Employee newEmployee) {
-        ModelAndView modelAndView = new ModelAndView("employees");
-
+    public ModelAndView saveEmployee(@ModelAttribute("newEmployee") Employee newEmployee, Model model) {
         // Check if the provided email is already registered
         Employee existingEmployee = employeeService.findByEmail(newEmployee.getEmail());
         if (existingEmployee != null) {
             List<Employee> employees = employeeService.getAllEmployees();
-            modelAndView.addObject("employees", employees);
-            modelAndView.addObject("newEmployee", new Employee());
-            modelAndView.addObject("error", "Email already registered.");
-            return modelAndView;
+            model.addAttribute("employees", employees);
+            model.addAttribute("newEmployee", new Employee());
+            model.addAttribute("error", "Email already registered.");
+            return new ModelAndView("employees", model.asMap());
         }
 
         employeeService.saveEmployee(newEmployee);
-        return modelAndView;
+        return new ModelAndView("redirect:/employee");
     }
 }
